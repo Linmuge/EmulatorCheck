@@ -19,11 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView te = findViewById(R.id.t1);
-        notHasLightSensorManager(this);
-        Log.d("not", "onCreate: " + notHasLightSensorManager(this));
         readSysProperty();
-        Log.d("reds", "onCreate: " + readSysProperty());
-        if (notHasLightSensorManager(this) && readSysProperty()) {
+        if (readSysProperty()) {
             te.setText("这是真机");
         } else {
             te.setText("这是模拟器");
@@ -35,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
      * return false 为模拟器 */
     public boolean readSysProperty() {
         int suspectCount = 0;
+        //判断是否存在光传感器来判断是否为模拟器
+        SensorManager sensorManager = (SensorManager)this.getSystemService(SENSOR_SERVICE);
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (null == sensor) ++suspectCount;
         //读基带信息
         String basebandVersion = CommandUtil.getSingleInstance().getProperty("gsm.version.baseband");
         if (basebandVersion == null | "".equals(basebandVersion)) ++suspectCount;
@@ -55,21 +56,6 @@ public class MainActivity extends AppCompatActivity {
         String filter = CommandUtil.getSingleInstance().exec("cat /proc/self/cgroup");
         if (filter == null || filter.length() == 0) ++suspectCount;
         return suspectCount < 2;
-    }
-    /**
-     * 判断是否存在光传感器来判断是否为模拟器
-     * 部分真机也不存在温度和压力传感器。其余传感器模拟器也存在。
-     * return false 为模拟器
-     */
-    public static Boolean notHasLightSensorManager(Context context) {
-        SensorManager sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT); //光
-        Log.d("sen", sensor+"");
-        if (null == sensor) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
 }

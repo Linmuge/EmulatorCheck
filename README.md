@@ -1,2 +1,2 @@
 # EmulatorCheck
-通过检测光传感器，基带信息，渠道信息，处理器信息，进程组等信息判断是否为模拟器
+The simulator is judged by detecting the light sensor, baseband information, channel information, processor information, process group and other information
